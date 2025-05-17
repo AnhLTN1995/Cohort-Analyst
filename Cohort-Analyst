@@ -1,0 +1,29 @@
+WITH Cohort_Month AS
+(
+    SELECT 
+        OrderDate,
+        SalesOrderID,
+        CustomerID,
+        datetrunc(month,Cast (MIN(OrderDate) OVER(partition by CustomerID) as date))  AS MinOrderMonth,
+        DATEDIFF(Month, MIN(OrderDate) OVER(partition by CustomerID), OrderDate) AS CohortMonth
+    FROM Sales.SalesOrderHeader
+    WHERE YEAR(OrderDate) =2013
+    GROUP BY   OrderDate, SalesOrderID, CustomerID
+)
+SELECT 
+    MinOrderMonth,
+    COUNT(distinct (Case when CohortMonth = 0 then CustomerID else null end)) as CohortMonth_0,
+    COUNT(distinct (Case when CohortMonth = 1 then CustomerID else null end)) as CohortMonth_1,
+    COUNT(distinct (Case when CohortMonth = 2 then CustomerID else null end)) as CohortMonth_2,
+    COUNT(distinct (Case when CohortMonth = 3 then CustomerID else null end)) as CohortMonth_3,
+    COUNT(distinct (Case when CohortMonth = 4 then CustomerID else null end)) as CohortMonth_4,
+    COUNT(distinct (Case when CohortMonth = 5 then CustomerID else null end)) as CohortMonth_5,
+    COUNT(distinct (Case when CohortMonth = 6 then CustomerID else null end)) as CohortMonth_6,
+    COUNT(distinct (Case when CohortMonth = 7 then CustomerID else null end)) as CohortMonth_7,
+    COUNT(distinct (Case when CohortMonth = 8 then CustomerID else null end)) as CohortMonth_8,
+    COUNT(distinct (Case when CohortMonth = 9 then CustomerID else null end)) as CohortMonth_9,
+    COUNT(distinct (Case when CohortMonth = 10 then CustomerID else null end)) as CohortMonth_10,
+    COUNT(distinct (Case when CohortMonth = 11 then CustomerID else null end)) as CohortMonth_11
+FROM Cohort_Month
+GROUP BY MinOrderMonth
+ORDER BY MinOrderMonth
